@@ -23,12 +23,13 @@ def pytest_addoption(parser):
     parser.addini('HELLO', 'Dummy pytest.ini setting')
 
 
-
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
 def pytest_runtest_makereport(item, call):
     outcome = yield
+    count = 0
     rep = outcome.get_result()
     if rep.when == "call" and rep.failed:
+        count += 1
         mode = "a" if os.path.exists("failures") else "w"
         with open("failures", mode) as f:
             if "tmpdir" in item.fixturenames:
