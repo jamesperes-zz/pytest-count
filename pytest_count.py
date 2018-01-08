@@ -9,10 +9,10 @@ from datetime import date
 
 today = str(date.today())
 
-with open("failures.json") as json_data:
-    d = json.loads(json_data)
-    for p in d['erros']:
-        print(p['id'])
+#with open("failures.json") as json_data:
+#    d = json.loads(json_data)
+#    for p in d['erros']:
+#        print(p['id'])
 
 
 def pytest_addoption(parser):
