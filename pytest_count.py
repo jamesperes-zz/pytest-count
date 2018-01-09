@@ -10,11 +10,11 @@ today = str(date.today())
 BASE_DIR = os.path.dirname(__file__)
 
 
+<<<<<<< HEAD
 # with open('failures.json') as json_data:
 #     d = json.loads(json_data)
 #     for p in d['erros']:
 #         print(p['id'])
-
 
 def pytest_addoption(parser):
     group = parser.getgroup('count')
