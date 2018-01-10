@@ -2,6 +2,7 @@
 
 import json
 import os.path
+import shutil
 from datetime import date
 
 import pytest
@@ -26,12 +27,33 @@ new_failures = {'erros': []}  # fazer isso aqui não persistir entre runpytest
 # fix a birosca do JSON
 # ver se o cache do pytest resolve a persistencia
 # ver o que dá pra aproveitar do proprio lastfailed
-new_list = []
+
+
+filename = os.path.join(BASE_DIR, 'failures.json')
+filename_old = os.path.join(BASE_DIR, 'old_failures.json')
+
+if os.path.exists(filename):
+    with open(filename, 'r') as f:
+        # print(f.readlines()[-1])
+        old_failures = f.readlines()
+else:
+    old_failures = {'erros': []}
+
+
+@pytest.hookimpl
+def pytest_fixture_setup(request):
+    global old_failures
+    print("copiaaa")
+    if os.path.exists(filename):
+        shutil.copy('failures.json', 'old_failures.json')
+    else:
+        old_failures = {'erros': []}
+
 
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
 def pytest_runtest_makereport(item, call):
     global new_failures
-    global new_list
+    global old_failures
 
     outcome = yield
     rep = outcome.get_result()
@@ -39,16 +61,6 @@ def pytest_runtest_makereport(item, call):
     if rep.when != 'call' or rep.fspath == 'tests/test_count.py':
         return
 
-    filename = os.path.join(BASE_DIR, 'failures.json')
-
-    if os.path.exists(filename):
-        with open(filename, 'r') as f:
-            #print(f.readlines()[-1])
-            old_failures = f.readlines()
-    else:
-        old_failures = {'erros': []}
-
-    # new_failures = {'erros': []}
     if rep.failed:
         if 'tmpdir' in item.fixturenames:
             extra = ' (%s)' % item.funcargs['tmpdir']
@@ -56,10 +68,21 @@ def pytest_runtest_makereport(item, call):
             extra = ''
 
         new_failures['erros'].append({'id': rep.nodeid, 'extra': extra})
-        new_list.extend(new_failures)
-    with open(filename, 'a') as f:
+
+    with open(filename, 'w') as f:
         json.dump(new_failures, f)
 
-    if len(new_failures) > len(old_failures):
+
+@pytest.mark.tryfirst
+def pytest_fixture_setup(fixturedef):
+    global filename
+    global filename_old
+    print("entraaaa")
+    with open(filename, 'r') as f:
+        new_count = f.readlines()
+    with open(filename_old, 'r') as f:
+        old_count = f.readlines()
+
+    if len(new_count) > len(old_count):
         # send mail
         print('send email')
