@@ -73,8 +73,8 @@ def pytest_runtest_makereport(item, call):
         json.dump(new_failures, f)
 
 
-@pytest.mark.tryfirst
-def pytest_fixture_setup(fixturedef):
+@pytest.hookimpl
+def pytest_fixture_post_finalizer(fixturedef):
     global filename
     global filename_old
     print("entraaaa")
