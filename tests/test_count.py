@@ -7,16 +7,16 @@ def test_working(testdir):
     # create a temporary pytest test module
     testdir.makepyfile("""
         def test_simple():
-            assert 1 == 0
+            assert 1 == 1
     """)
 
     # run pytest with the following cmd args
-    testdir.runpytest('--count', '-v')
+    #testdir.runpytest('--count', '-v')
 
     testdir.makepyfile("""
             def test_simple_again():
                 assert 1 == 0
-            
+
             def test_simple_new():
                 assert 1 == 0
         """)
@@ -24,4 +24,4 @@ def test_working(testdir):
     # run pytest with the following cmd args
     result = testdir.runpytest('--count', '-v')
 
-    assert result.ret == 1
+    assert result.ret == 0

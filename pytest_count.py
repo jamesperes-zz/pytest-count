@@ -26,23 +26,25 @@ new_failures = {'erros': []}  # fazer isso aqui não persistir entre runpytest
 # fix a birosca do JSON
 # ver se o cache do pytest resolve a persistencia
 # ver o que dá pra aproveitar do proprio lastfailed
-
+new_list = []
 
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
 def pytest_runtest_makereport(item, call):
     global new_failures
+    global new_list
 
     outcome = yield
     rep = outcome.get_result()
-
-    if rep.when != 'call' or rep.fspath == 'tests/test_count.py':  # ToDo: make it pretty
+# ToDo: make it pretty
+    if rep.when != 'call' or rep.fspath == 'tests/test_count.py':
         return
 
     filename = os.path.join(BASE_DIR, 'failures.json')
 
     if os.path.exists(filename):
         with open(filename, 'r') as f:
-            old_failures = json.loads(''.join(f.readlines()))[-1]
+            #print(f.readlines()[-1])
+            old_failures = f.readlines()
     else:
         old_failures = {'erros': []}
 
@@ -54,10 +56,10 @@ def pytest_runtest_makereport(item, call):
             extra = ''
 
         new_failures['erros'].append({'id': rep.nodeid, 'extra': extra})
+        new_list.extend(new_failures)
+    with open(filename, 'a') as f:
+        json.dump(new_failures, f)
 
-    # with open(filename, 'a') as f:
-    #     json.dump(new_failures, f)
-
-    if len(new_failures['erros']) > len(old_failures['erros']):
+    if len(new_failures) > len(old_failures):
         # send mail
         print('send email')
