@@ -22,24 +22,13 @@ def pytest_addoption(parser):
     )
 
 
-new_failures = {'erros': []}  # fazer isso aqui não persistir entre runpytest
-
-# fix a birosca do JSON
-# ver se o cache do pytest resolve a persistencia
-# ver o que dá pra aproveitar do proprio lastfailed
+new_failures = {'erros': []}
 
 
 filename = os.path.join(BASE_DIR, 'failures.json')
 filename_old = os.path.join(BASE_DIR, 'old_failures.json')
 
-# if os.path.exists(filename):
-#     with open(filename, 'r') as f:
-#         # print(f.readlines()[-1])
-#         old_failures = f.readlines()
-# else:
-#     old_failures = {'erros': []}
-
-
+@pytest.hookimpl
 def pytest_sessionstart(session):
     global filename
     global filename_old
@@ -74,16 +63,18 @@ def pytest_runtest_makereport(item, call):
 
 
 
-
+@pytest.hookimpl
 def pytest_sessionfinish(session):
     global filename
     global filename_old
-    print("entraaaa")
+
     with open(filename, 'r') as f:
         new_count = f.readlines()
+        new_data = json.loads(new_count[0])
     with open(filename_old, 'r') as f:
         old_count = f.readlines()
+        old_data = json.loads(old_count[0])
 
-    if len(new_count) > len(old_count):
+    if len(new_data['erros']) > len(old_data['erros']):
         # send mail
         print('send email')
