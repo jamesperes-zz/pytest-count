@@ -78,3 +78,4 @@ def pytest_sessionfinish(session):
     if len(new_data['erros']) > len(old_data['erros']):
         # send mail
         print('send email')
+
