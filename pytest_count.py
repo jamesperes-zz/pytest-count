@@ -40,7 +40,7 @@ filename_old = os.path.join(BASE_DIR, 'old_failures.json')
 #     old_failures = {'erros': []}
 
 
-def pytest_terminal_summary(terminalreporter):
+def pytest_sessionstart(session):
     global filename
     global filename_old
     print("copiaaa")
@@ -73,8 +73,9 @@ def pytest_runtest_makereport(item, call):
         json.dump(new_failures, f)
 
 
-@pytest.hookimpl
-def pytest_fixture_post_finalizer(fixturedef):
+
+
+def pytest_sessionfinish(session):
     global filename
     global filename_old
     print("entraaaa")
