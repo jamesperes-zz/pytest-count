@@ -32,22 +32,22 @@ new_failures = {'erros': []}  # fazer isso aqui não persistir entre runpytest
 filename = os.path.join(BASE_DIR, 'failures.json')
 filename_old = os.path.join(BASE_DIR, 'old_failures.json')
 
-if os.path.exists(filename):
-    with open(filename, 'r') as f:
-        # print(f.readlines()[-1])
-        old_failures = f.readlines()
-else:
-    old_failures = {'erros': []}
+# if os.path.exists(filename):
+#     with open(filename, 'r') as f:
+#         # print(f.readlines()[-1])
+#         old_failures = f.readlines()
+# else:
+#     old_failures = {'erros': []}
 
 
-@pytest.hookimpl
-def pytest_fixture_setup(request):
-    global old_failures
+def pytest_terminal_summary(terminalreporter):
+    global filename
+    global filename_old
     print("copiaaa")
     if os.path.exists(filename):
-        shutil.copy('failures.json', 'old_failures.json')
+        shutil.copy(filename, filename_old)
     else:
-        old_failures = {'erros': []}
+        filename_old = {'erros': []}
 
 
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
