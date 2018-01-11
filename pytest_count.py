@@ -4,6 +4,7 @@ import json
 import os.path
 import shutil
 from datetime import date
+from mail import notification
 
 import pytest
 
@@ -32,7 +33,7 @@ filename_old = os.path.join(BASE_DIR, 'old_failures.json')
 def pytest_sessionstart(session):
     global filename
     global filename_old
-    print("copiaaa")
+
     if os.path.exists(filename):
         shutil.copy(filename, filename_old)
     else:
@@ -77,5 +78,6 @@ def pytest_sessionfinish(session):
 
     if len(new_data['erros']) > len(old_data['erros']):
         # send mail
+        notification(len(new_data['erros']))
         print('send email')
 
