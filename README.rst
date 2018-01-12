@@ -41,11 +41,12 @@ Configuration
 ------------
 
 Open mail.py and configure your e-mail,
+
 ```sh
-    your_email = "EMAIL"
-    send_email = "EMAIL"
-    server = smtplib.SMTP("SMTP", 587)
-    server.login(your_email, "PASSWORD")
+your_email = "EMAIL"
+send_email = "EMAIL"
+server = smtplib.SMTP("SMTP", 587)
+server.login(your_email, "PASSWORD")
 ```
 
 
