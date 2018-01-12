@@ -37,6 +37,19 @@ You can install "pytest-count" via `pip`_ from `PyPI`_::
     $ pip install pytest-count
 
 
+Configuration
+------------
+
+Open mail.py and configure your e-mail,
+```sh
+    your_email = "EMAIL"
+    send_email = "EMAIL"
+    server = smtplib.SMTP("SMTP", 587)
+    server.login(your_email, "PASSWORD")
+```
+
+
+
 Usage
 -----
 
